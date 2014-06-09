@@ -38,5 +38,9 @@
 	(nreverse result)))
 
 
+(defun input-csv (csv)
+	(let ((lst (split #\, csv)))
+		lst))
+
 (with-open-file (output "test" )
 	(print (read output)))
