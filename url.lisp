@@ -37,10 +37,34 @@
 	  do (setq str (subseq str (1+ pos))))
 	(nreverse result)))
 
-
+;;;csv->list
 (defun input-csv (csv)
 	(let ((lst (split #\, csv)))
 		lst))
 
+(defun include (key str)
+	(let ((flag nil)
+				(len1 (length str))
+				(len2 (length key)))
+		(loop
+			for i from 0 to (- len1 len2)
+			do (if (string= key str :start2 i :end2 (+ i len2))
+					 (setq flag t))
+			until flag)
+		flag))
+
+(defun pick-sites (result)
+	(remove-if #'null
+	(mapcar 
+		#'(lambda (item)
+							(if (and (http-p item) 
+											 (not (some 
+															#'(lambda (key)
+																	(include key item))
+															'("livedoor" "linecorp" "adsense"))))
+								item))
+					(remove-duplicates (pick-double-quotation result) :test #'equal))))
+
 (with-open-file (output "test" )
-	(print (read output)))
+	(let ((data (read output)))
+		(print (pick-sites data))))
